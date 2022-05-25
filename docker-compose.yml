@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+ php:
+  build:
+   context: .
+   dockerfile: dockerfile
+  container_name: php73retest
+  depends_on:
+   - db
+  image: php:7.3-apache
+  volumes:
+   - ./php:/var/www/html/
+  ports:
+   - 80:80
+ db:
+  container_name: mysql8test
+  image: mysql:8.0
+  command: --default-authentication-plugin=mysql_native_password
+  environment:
+   MYSQL_ROOT_PASSWORD: tutoseu
+   MYSQL_DATABASE: tutoseu
+   MYSQL_USER: myuser
+   MYSQL_PASSWORD: monpassword
+  ports:
+   - 3306:3306
+ phpmya:
+  image: phpmyadmin/phpmyadmin:latest
+  container_name: phpmyadmintest
+  environment:
+   PMA_ARBITRARY: 1
+   PMA_HOST: db
+   PMA_USER: myuser
+   PMA_PASSWORD: monpassword
+   UPLOAD_LIMIT: 20M
+  ports:
+   - 8899:80
