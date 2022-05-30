@@ -1,5 +1,7 @@
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -11,6 +13,8 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- FONT AWESOME -->
     <script src="https://kit.fontawesome.com/74635a3956.js" crossorigin="anonymous"></script>
+    <!-- JS -->
+    <script src="../js/modal.js" ></script>
     
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
