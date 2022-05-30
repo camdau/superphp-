@@ -1,2 +1,0 @@
-# superphp
-Training php natif 
