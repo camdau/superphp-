@@ -1,9 +1,4 @@
 <?php
-//  session_start();
-//  $_SESSION['LOGGED_USER'] = $sql_user['pseudo'];
-session_start();
-//  die(var_dump($_SESSION));
-echo $_SESSION['LOGGED_USER'];
 
 $title = "Messagerie";
 require 'elements/header.php';
@@ -20,12 +15,31 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // il faut récupérer tous les messages dans la table messages -> requête sql avec select 
-    $sql_messages = $pdo->query("SELECT date, pseudo, user_id, content FROM messages")->fetchALl();
+    // $sql_messages = $pdo->query("SELECT date, pseudo, user_id, content FROM messages")->fetchALl();
 
-    // il faut enregistrer les messages 
-    // $sql_messages = $pdo->query();
+    // il faut enregistrer les messages
+    if (isset($_POST['add-message'])) {
+    $data = [
+            'id' => $_SESSION['LOGGED_USER_ID'],
+            'content' => $_POST['add-message']
+        ];
+        $sql_register_messages = "INSERT INTO messages (user_id, content, date) VALUES (:id, :content, curdate())";
+        $stmt = $pdo->prepare($sql_register_messages);
+        $stmt->execute($data);
+    }
+    
+    //pour faire correspondre les utilisateurs aux messages,  il faut joindre les 2 tables users et messages
+    $sql_messages = $pdo->query("SELECT pseudo, messages.content, date
+    FROM users
+    INNER JOIN messages
+    ON users.id = messages.user_id")->fetchALl();
 
-    // var_dump($sql_messages);
+
+    //pour supprimer les messages de la ligne voulu 
+
+    $sql_delete_messages = "DELETE FROM messages WHERE ";
+    $stmt= $pdo->prepare($sql_delete_messages);
+    $stmt->execute($id);
 }
 
 /*On capture les exceptions si une exception est lancée et on afficheles informations relatives à celle-ci*/ catch (PDOException $e) {
@@ -57,16 +71,18 @@ try {
                             </button>
                         </div>
                         <div class="modal-body">
-                          <form action="" method="post"> 
-                              <div class="form-group">
-                                  <textarea name="add-message" id="" cols="44" rows="10"></textarea>
-                              </div>
-                          </form>
+                            <form action="" method="post">
+                                <div class="form-group">
+                                    <textarea name="add-message" id="" cols="27" rows="10">
+                                  </textarea>
+                                </div>
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                            <button type="button" class="btn btn-primary">Enregistrer</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -94,9 +110,12 @@ try {
                         <td><?= $sql_message['pseudo'] ?></td>
                         <td><?= $sql_message['content'] ?></td>
                         <td>
-                            <button type="button" class="btn btn-success"><i class="fa-solid fa-pen"></i> &ensp; Mis à jour</button>
+                            <button type="submit" class="btn btn-success"><i class="fa-solid fa-pen"></i> &ensp; Modifier</button>
                             &ensp;
-                            <button type="button" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> &ensp; Supprimer</button>
+                            <form action='' method="delete">
+                            
+                            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> &ensp; Supprimer</button>
+                           </form>
                         </td>
                 </tr>
             <?php } ?>

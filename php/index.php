@@ -1,7 +1,5 @@
-
 <?php
-
-$_SESSION['LOGGED_USER'] = $sql_user['pseudo'];
+session_start();
 
 $title ="Accueil";
 require 'elements/header.php';

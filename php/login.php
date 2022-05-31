@@ -1,7 +1,9 @@
 <?php
 ob_start();
 
-echo $_SESSION['LOGGED_USER'] = $sql_user['pseudo'];
+session_start();
+
+session_destroy();
 
 $title = "Sign in";
 require_once 'class/Message.php';
@@ -26,7 +28,7 @@ try {
     if (isset($_POST['mail']) && isset($_POST['password'])) {
 
         // il faut récupérer les mails et mots de passe dans la table users -> requête sql avec select 
-        $sql_users = $pdo->query("SELECT mail, password, pseudo  FROM users")->fetchALl();
+        $sql_users = $pdo->query("SELECT mail, password, pseudo, id  FROM users")->fetchALl();
 
         // il faut parcourir tous les mails et mots de passe avec une boucle
 
@@ -41,6 +43,7 @@ try {
             if ($sql_user['mail'] == $_POST['mail'] && password_verify($_POST['password'], $sql_user['password'])) {
                 session_start();
                 $_SESSION['LOGGED_USER'] = $sql_user['pseudo'];
+                $_SESSION['LOGGED_USER_ID'] = $sql_user['id'];
                 header("Location: http://localhost/messages.php");
                 exit();
             }

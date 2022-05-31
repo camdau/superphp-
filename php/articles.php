@@ -1,5 +1,6 @@
-
 <?php
+session_start();
+
 $title = "Nouveautés PHP";
 require 'elements/header.php';
 ?>

@@ -1,5 +1,6 @@
-
 <?php
+session_start();
+
 $title = "Qui sommes-nous";
 require 'elements/header.php';
 ?>
