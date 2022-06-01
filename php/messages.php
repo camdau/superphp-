@@ -43,7 +43,9 @@ try {
         $sql_modify_messages = "UPDATE messages SET content=? WHERE id=?";
         $stmt = $pdo->prepare($sql_modify_messages);
         $stmt->execute([$_POST['content'], $_POST['id_modify']]);
-     }  
+     } 
+     
+     
 
     //pour afficher les messages correspondant aux utilisateurs (jonction table users et messages)
     $sql_messages = $pdo->query("SELECT messages.id, pseudo, messages.content, date
@@ -154,13 +156,41 @@ try {
                                       </form>
                                 </div>
                             </div>
-                        </div>                  
-                        <td>
-                            <form action='' method="post">
-                                <input name="id_delete" value=<?= $sql_message['id']?> hidden></input>
-                                <button type="submit" name='delete' class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer</button>
-                            </form>
-                        </td>
+                        </div> 
+                        
+                        <!-- Modal pour afficher message de confirmation suppression -->
+                        <div class="modal fade" id="delete<?= $sql_message['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterContent" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered light" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalCenterContent">Attention</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="" method="post">
+                                                    <div class="form-group">
+                                                      <h2>Etes-vous sûr de vouloir supprimer le message?</h2> 
+                                                    </div>
+                                    </div>
+                                        <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">oui</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">non</button>
+                                                
+                                        </div>
+                                        <td>
+                                        <form action='' method="post">
+                                            <input name="id_delete" value=<?= $sql_message['id']?> hidden></input>
+                                            <button type="button" name='delete' class="btn btn-danger" data-toggle="modal" data-target="#delete<?= $sql_message['id']?>" ><i class="fa-solid fa-trash-can"></i> Supprimer</button>
+                                        </form>
+                                        </td>
+
+                                      </form>
+                                </div>
+                            </div>
+                        </div>                                   
+                        
                 </tr>
                         
                  
