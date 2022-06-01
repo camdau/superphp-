@@ -19,7 +19,7 @@ try {
 
     // il faut enregistrer les messages
     if (isset($_POST['add-message'])) {
-    $data = [
+        $data = [
             'id' => $_SESSION['LOGGED_USER_ID'],
             'content' => $_POST['add-message']
         ];
@@ -27,22 +27,34 @@ try {
         $stmt = $pdo->prepare($sql_register_messages);
         $stmt->execute($data);
     }
+
     
-    //pour faire correspondre les utilisateurs aux messages,  il faut joindre les 2 tables users et messages
-    $sql_messages = $pdo->query("SELECT pseudo, messages.content, date
+    //pour supprimer les messages de la ligne voulu 
+
+    if (isset($_POST['id_delete'])) {
+        $sql_delete_messages = "DELETE FROM messages WHERE id=? ";
+        $stmt = $pdo->prepare($sql_delete_messages);
+        $stmt->execute([$_POST['id_delete']]);
+    }
+
+    //pour modifier les messages de la ligne voulu
+    if (isset ($_POST['id_modify'])){
+    
+        $sql_modify_messages = "UPDATE messages SET content=? WHERE id=?";
+        $stmt = $pdo->prepare($sql_modify_messages);
+        $stmt->execute([$_POST['content'], $_POST['id_modify']]);
+     }  
+
+    //pour afficher les messages correspondant aux utilisateurs (jonction table users et messages)
+    $sql_messages = $pdo->query("SELECT messages.id, pseudo, messages.content, date
     FROM users
     INNER JOIN messages
     ON users.id = messages.user_id")->fetchALl();
 
 
-    //pour supprimer les messages de la ligne voulu 
-
-    $sql_delete_messages = "DELETE FROM messages WHERE ";
-    $stmt= $pdo->prepare($sql_delete_messages);
-    $stmt->execute($id);
 }
 
-/*On capture les exceptions si une exception est lancée et on afficheles informations relatives à celle-ci*/ catch (PDOException $e) {
+/*On capture les exceptions si une exception est lancée et on affiche les informations relatives à celle-ci*/ catch (PDOException $e) {
     echo "Erreur : " . $e->getMessage();
 }
 
@@ -86,6 +98,8 @@ try {
                     </div>
                 </div>
             </div>
+
+            
         </div>
 
     </div>
@@ -109,15 +123,47 @@ try {
                         <th scope="row"><?= $sql_message['date'] ?></th>
                         <td><?= $sql_message['pseudo'] ?></td>
                         <td><?= $sql_message['content'] ?></td>
+
+                        <!-- Modal pour modifier -->
+                        <div class="modal fade" id="modif<?= $sql_message['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterContent" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered light" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header ">
+                                        <h5 class="modal-title" id="exampleModalCenterContent">Votre message</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="" method="post">
+                                                <div class="form-group">
+                                                    <textarea name="content" id="<?= $sql_message['id']?>" cols="27" rows="10"><?= $sql_message['content'] ?></textarea>
+                                                </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </div>
+
+                                        <td>
+                                            <form action='' method="post">
+                                                <input name="id_modify" value=<?= $sql_message['id']?> hidden></input>
+                                                <button type="button" name="modify" class="btn btn-success mb-2" data-toggle="modal" data-target="#modif<?= $sql_message['id']?>"><i class="fa-solid fa-pen"></i>Modifier</button>
+                                        </form>
+                                        </td>
+                                      </form>
+                                </div>
+                            </div>
+                        </div>                  
                         <td>
-                            <button type="submit" class="btn btn-success"><i class="fa-solid fa-pen"></i> &ensp; Modifier</button>
-                            &ensp;
-                            <form action='' method="delete">
-                            
-                            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> &ensp; Supprimer</button>
-                           </form>
+                            <form action='' method="post">
+                                <input name="id_delete" value=<?= $sql_message['id']?> hidden></input>
+                                <button type="submit" name='delete' class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Supprimer</button>
+                            </form>
                         </td>
                 </tr>
+                        
+                 
             <?php } ?>
             </tbody>
         </table>
