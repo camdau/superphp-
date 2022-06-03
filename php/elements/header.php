@@ -52,11 +52,10 @@ session_start();
           <div class="mt-1 mr-5">
           <i class="fa-solid fa-2x fa-user"></i>
           <span class="pseudo-user">
-         
           <?php
           echo $_SESSION['LOGGED_USER'];
-
-          ?></span>
+          ?>
+          </span>
           </div>
 
           <?php if (isset ($_SESSION['LOGGED_USER'])){ 
